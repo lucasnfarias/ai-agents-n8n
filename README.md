@@ -24,3 +24,7 @@ WhatsApp AI Agent made with n8n
 - Postgres
 - Redis
 - [Evolution API](https://doc.evolution-api.com/v1/pt/env)
+
+## N8N
+- We use the [Queue Mode](https://docs.n8n.io/hosting/scaling/queue-mode/)
+<img width="752" height="261" alt="image" src="https://github.com/user-attachments/assets/c48397f7-0047-4ecc-ad8a-1f72033b1da1" />
