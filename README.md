@@ -1,5 +1,31 @@
 # ai-agents-n8n
 
+```mermaid
+---
+config:
+  theme: redux
+  layout: dagre
+---
+flowchart LR
+    A(["WhatsApp"]) --> B{"Webhook (n8n)"}
+    B --> D["UserInfo (supabase)"]
+    D --> n1(["HiL (block)"])
+    n1 --> n3["ParseMessage"]
+    n3 --> n4["MessageQueue"]
+    n4 --> n5["IA"]
+    n5 --> n2(["HiL (block)"])
+    n2 --> n6["Response"]
+    n6 -.-> A
+    n7["ErrorCatch"] --> n8["Webhook Discord"]
+    n3@{ shape: hex}
+    n4@{ shape: hex}
+    n5@{ shape: trap-b}
+    n6@{ shape: trap-t}
+    n7@{ shape: rounded}
+    n8@{ shape: diam}
+
+```
+
 WhatsApp AI Agent made with n8n
 
 - Create a environment on VPS with Docker + [Coolify](https://coolify.io/)
