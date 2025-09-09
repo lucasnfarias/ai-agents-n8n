@@ -8,10 +8,19 @@ WhatsApp AI Agent made with n8n
 - Integrate with [Evolution API](https://doc.evolution-api.com/v1/pt/get-started/introduction) that will be the bridge to WhatsApp
 
 ## Installation
+
 1. We used Hetzner to host our Coolify and other tools
 2. Created a domain on HostGator (test-app-lucas.shop) and setup rule/register `A | *.test-app-lucas.shop.` to point to Hetzner server IP
-4. We installed Coolify on Hetzner server by running this command via ssh: `curl -fsSL https://cdn.coollabs.io/coolify/install.sh | sudo bash`
-5. Updated Coolify setting to point to https://coolify.test-app-lucas.shop
-6. Created a project and add Supabase as a project resource on Coolify
-7. Updated supabase domain to https://supabase.test-app-lucas.shop and deployed it
-8. 
+3. We installed Coolify on Hetzner server by running this command via ssh: `curl -fsSL https://cdn.coollabs.io/coolify/install.sh | sudo bash`
+4. Updated Coolify setting to point to https://coolify.test-app-lucas.shop
+5. Created a project and add Supabase as a project resource on Coolify
+6. Updated supabase domain to https://supabase.test-app-lucas.shop and deployed it
+7. Created the `docker-compose.yml` to configure all the necessary containers for our infra WhatsApp N8N Agent
+8. Update N8N and Evolution API domains
+
+## Containers
+
+- [N8N (main, worker and webhook)](https://docs.n8n.io/hosting/configuration/environment-variables/)
+- Postgres
+- Redis
+- [Evolution API](https://doc.evolution-api.com/v1/pt/env)
