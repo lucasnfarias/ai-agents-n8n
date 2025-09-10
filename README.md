@@ -1,5 +1,7 @@
 # ai-agents-n8n
 
+An AI agent to generate, handle and qualify Leads om WhatsApp made with n8n, Coolify, Supabase, Evolution and more.
+
 ```mermaid
 ---
 config:
@@ -7,10 +9,10 @@ config:
   layout: dagre
 ---
 flowchart LR
-    A(["WhatsApp"]) --> B{"Webhook (n8n)"}
+    A(["WhatsApp"]) --> B{"Webhook (evo-n8n)"}
     B --> D["UserInfo (supabase)"]
-    D --> n1(["HiL (block)"])
-    n1 --> n3["ParseMessage"]
+    D --> n1(["HiL (redis)<br>- block for 5 min if human owner is talking"])
+    n1 --> n3["ParseMessage<br>(text, image and audio)"]
     n3 --> n4["MessageQueue"]
     n4 --> n5["IA"]
     n5 --> n2(["HiL (block)"])
@@ -26,23 +28,27 @@ flowchart LR
 
 ```
 
-WhatsApp AI Agent made with n8n
-
 - Create a environment on VPS with Docker + [Coolify](https://coolify.io/)
 - Deploy a [N8N](https://n8n.io/) distributed structure (Editor, Worker, Webhook)
 - Configure [Supabase](https://supabase.com/), [Redis](https://redis.io/) and [PostgreSQL](https://www.postgresql.org/)
 - Integrate with [Evolution API](https://doc.evolution-api.com/v1/pt/get-started/introduction) that will be the bridge to WhatsApp
 
-## Installation
+## Installation & Setup
 
-1. We used Hetzner to host our Coolify and other tools
-2. Created a domain on HostGator (test-app-lucas.shop) and setup rule/register `A | *.test-app-lucas.shop.` to point to Hetzner server IP
-3. We installed Coolify on Hetzner server by running this command via ssh: `curl -fsSL https://cdn.coollabs.io/coolify/install.sh | sudo bash`
-4. Updated Coolify setting to point to https://coolify.test-app-lucas.shop
-5. Created a project and add Supabase as a project resource on Coolify
-6. Updated supabase domain to https://supabase.test-app-lucas.shop and deployed it
-7. Created the `docker-compose.yml` to configure all the necessary containers for our infra WhatsApp N8N Agent
-8. Update N8N and Evolution API domains
+- We used Hetzner to host our Coolify and other tools
+- Created a domain on HostGator (test-app-lucas.shop) and setup rule/register `A | *.test-app-lucas.shop.` to point to Hetzner server IP
+- We installed Coolify on Hetzner server by running this command via ssh: `curl -fsSL https://cdn.coollabs.io/coolify/install.sh | sudo bash`
+- Updated Coolify setting to point to https://coolify.test-app-lucas.shop
+- Created a project and add Supabase as a project resource on Coolify
+- Updated supabase domain to https://supabase.test-app-lucas.shop and deployed it
+- Created the `docker-compose.yml` to configure all the necessary containers for our infra WhatsApp N8N Agent
+- Update N8N and Evolution API domains
+- Setup credentials on N8N
+  - Supabase, postgres, redis: get credentials on Coolify
+  - [OpenAI](https://platform.openai.com/api-keys): set credits and get API Token
+  - [GCP](https://console.cloud.google.com/auth/clients?project=n8n-ai-whatsapp): enabled Docs, Drive and Calendar APIs. Setup a OAuth Client ID.
+  - Discord: webhook
+- Setup Hetzner Firewall to expose only ports 22 (ssh), 80 (http) and 443 (https) 
 
 ## Containers
 
