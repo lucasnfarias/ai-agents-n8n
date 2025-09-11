@@ -60,3 +60,9 @@ flowchart LR
 ## N8N
 - We use the [Queue Mode](https://docs.n8n.io/hosting/scaling/queue-mode/)
 <img width="752" height="261" alt="image" src="https://github.com/user-attachments/assets/c48397f7-0047-4ecc-ad8a-1f72033b1da1" />
+
+## Troubleshooting
+## Supabase consuming too much CPU
+- run `docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}"` on your server to check cpu and memory usage by containers
+- If you see some container from supabase consuming too much resource check if you can stop it
+  - e.g. supabase-vector container is related to logs and minor things and sometimes you don't use/need those  
