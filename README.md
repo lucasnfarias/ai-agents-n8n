@@ -13,8 +13,8 @@ flowchart LR
     B --> D["UserInfo (supabase)"]
     D --> n1(["HiL (redis)<br>- block for 5 min if human owner is talking"])
     n1 --> n3["ParseMessage<br>(text, image and audio)"]
-    n3 --> n4["MessageQueue"]
-    n4 --> n5["IA"]
+    n3 --> n4["MessageQueue<br>(group separated broken messages)<br>- wait for message groups for 15s"]
+    n4 --> n5["IA<br>Multi Agents:<br>- SDR (qualify)<br>- Google Calendar<br>- Consultor (RAG Docs)"]
     n5 --> n2(["HiL (block)"])
     n2 --> n6["Response"]
     n6 -.-> A
