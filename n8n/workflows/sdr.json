@@ -1,0 +1,579 @@
+{
+  "createdAt": "2025-08-24T16:37:20.857Z",
+  "updatedAt": "2025-08-25T00:34:33.959Z",
+  "id": "sLHg81zvRbzdgVNE",
+  "name": "SDR",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sdr",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -96,
+        0
+      ],
+      "id": "e7720c9e-5887-4fde-a2c4-7db238af6a5f",
+      "name": "Webhook",
+      "webhookId": "6de5601f-d4cf-463d-9f80-f07ffb3cce88"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "iD1jyrdbwa2yekfj",
+          "mode": "list",
+          "cachedResultName": "SDR - UserInfo"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "payload": "={{ \n{\n  whatsapp: $json.body.data.key.remoteJid\n}\n}}"
+          },
+          "matchingColumns": [
+            "payload"
+          ],
+          "schema": [
+            {
+              "id": "payload",
+              "displayName": "payload",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        128,
+        0
+      ],
+      "id": "ae404738-1a2c-4042-bb86-03bd723d238e",
+      "name": "UserInfo"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "kjjBZDpVuaTaAbjU",
+          "mode": "list",
+          "cachedResultName": "SDR - HiL"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "payload": "={{ \n{\n  whatsapp: $json.whatsapp,\n  fromMe: $node['Webhook'].json.body.data.key.fromMe\n}\n}}"
+          },
+          "matchingColumns": [
+            "payload"
+          ],
+          "schema": [
+            {
+              "id": "payload",
+              "displayName": "payload",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        336,
+        0
+      ],
+      "id": "a4f82ea1-8906-4f58-a68c-3fb74cd0ec68",
+      "name": "HiL"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "jJvv4kmBFYlWAIO3",
+          "mode": "list",
+          "cachedResultName": "SDR - ParseMessage"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "payload": "={{ \n{\n  messageType: $node['Webhook'].json.body.data.messageType,\n  conversation: $node['Webhook'].json.body.data.message.conversation,\n  messageId: $node['Webhook'].json.body.data.key.id,\n  evolution: {\n    apikey: $node['Webhook'].json.body.apikey,\n    serverUrl: $node['Webhook'].json.body.server_url,\n    instance: $node['Webhook'].json.body.instance\n  }\n}\n}}"
+          },
+          "matchingColumns": [
+            "payload"
+          ],
+          "schema": [
+            {
+              "id": "payload",
+              "displayName": "payload",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        544,
+        0
+      ],
+      "id": "cf1116d1-cecb-478e-b02f-5194023ff1e6",
+      "name": "ParseMessage"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6ab28384-fce7-4ef4-baa8-7e1b557d44f6",
+              "name": "payload.fromMe",
+              "value": "={{ $node['Webhook'].json.body.data.key.fromMe }}",
+              "type": "string"
+            },
+            {
+              "id": "f97f0722-fc09-4b8b-bb3a-2a74df954585",
+              "name": "payload.from",
+              "value": "={{ $node['Webhook'].json.body.data.key.remoteJid }}",
+              "type": "string"
+            },
+            {
+              "id": "9208d375-d2c3-4cb6-bc32-8e2b508c4d37",
+              "name": "payload.msg.id",
+              "value": "={{ $node['Webhook'].json.body.data.key.id }}",
+              "type": "string"
+            },
+            {
+              "id": "02387943-4bd2-4140-a641-80bdc728b12d",
+              "name": "payload.msg.date",
+              "value": "={{ $node['Webhook'].json.body.data.messageTimestamp.toDateTime('s') }}",
+              "type": "string"
+            },
+            {
+              "id": "ef8a1cd1-faf1-487d-9888-f1222cd87a2c",
+              "name": "payload.msg.content",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            },
+            {
+              "id": "058ef56c-1c96-41e0-89ec-eb6d5cc420ce",
+              "name": "payload.evolution.apikey",
+              "value": "={{ $node['Webhook'].json.body.apikey }}",
+              "type": "string"
+            },
+            {
+              "id": "39710aa7-e171-47dc-a52e-21a456c8aa4d",
+              "name": "payload.evolution.serverUrl",
+              "value": "={{ $node['Webhook'].json.body.server_url }}",
+              "type": "string"
+            },
+            {
+              "id": "f41cdd1c-8c58-4a43-a874-6253352637fe",
+              "name": "payload.evolution.instance",
+              "value": "={{ $node['Webhook'].json.body.instance }}",
+              "type": "string"
+            },
+            {
+              "id": "4be2f82e-c335-4519-b007-3371c573edb9",
+              "name": "payload.userInfo",
+              "value": "={{ $node['UserInfo'].json}}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        736,
+        0
+      ],
+      "id": "eca43177-7237-4f23-aee1-07fed53cadcf",
+      "name": "Payload"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "1Wu7NPtuWIO13T7K",
+          "mode": "list",
+          "cachedResultName": "SDR - MessageQueue"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "payload": "={{ $json.payload }}"
+          },
+          "matchingColumns": [
+            "payload"
+          ],
+          "schema": [
+            {
+              "id": "payload",
+              "displayName": "payload",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        944,
+        0
+      ],
+      "id": "5c62baf8-becd-4b05-babf-8710b76903a7",
+      "name": "MessageQueue"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "PjOLff9iok456NyR",
+          "mode": "list",
+          "cachedResultName": "SDR - IA"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "payload": "={{ \n{\n  ...$node['Payload'].json.payload,\n  msg: {\n    ...$node['Payload'].json.payload.msg,\n    content: $json.message\n  }\n}\n}}"
+          },
+          "matchingColumns": [
+            "payload"
+          ],
+          "schema": [
+            {
+              "id": "payload",
+              "displayName": "payload",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1168,
+        0
+      ],
+      "id": "be28cbd3-4c35-4fdd-9e54-5ce82d1044ae",
+      "name": "IA"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "kjjBZDpVuaTaAbjU",
+          "mode": "list",
+          "cachedResultName": "SDR - HiL"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "payload": "={{ \n{\n  whatsapp: $node['Payload'].json.payload.from,\n  fromMe: !$node['Payload'].json.payload.fromMe\n}\n}}"
+          },
+          "matchingColumns": [
+            "payload"
+          ],
+          "schema": [
+            {
+              "id": "payload",
+              "displayName": "payload",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1360,
+        0
+      ],
+      "id": "bc0cd0f6-ca56-45ca-8879-19f34a9678b1",
+      "name": "HiL1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "SPSwFqwFEWNuCS7S",
+          "mode": "list",
+          "cachedResultName": "SDR - Response"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "payload": "={{\n{\n  ...$node['Payload'].json.payload,\n  ia: $node['IA'].json.output\n}\n}}"
+          },
+          "matchingColumns": [
+            "payload"
+          ],
+          "schema": [
+            {
+              "id": "payload",
+              "displayName": "payload",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        0
+      ],
+      "id": "08af2de9-bf84-4b5e-83be-727181a96072",
+      "name": "Response"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        208
+      ],
+      "id": "927e459c-cf0d-4832-81a3-69c10312bd95",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=❌ Erro no SDR Aline\n\nWorkflow: {{ $json.workflow.name }}\nNode: {{ $json.execution.lastNodeExecuted }}\nLink: {{ $json.execution.url.replace('http://localhost:5678', 'https://n8n.rseat.store') }}\n--- \nDescription:\n{{ $json.execution?.error?.description }}\n----\nDatetime: {{ $now.format('dd/LL/yyyy HH:mm.ss') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        128,
+        208
+      ],
+      "id": "7bdbd801-d57a-4f21-b91f-d0086c37f62b",
+      "name": "Discord",
+      "webhookId": "67d9c1ac-aeec-4e13-ba77-fb395f6b90de",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "hxeAQJI8vjnEdcVT",
+          "name": "Discord Webhook account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "UserInfo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UserInfo": {
+      "main": [
+        [
+          {
+            "node": "HiL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HiL": {
+      "main": [
+        [
+          {
+            "node": "ParseMessage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ParseMessage": {
+      "main": [
+        [
+          {
+            "node": "Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Payload": {
+      "main": [
+        [
+          {
+            "node": "MessageQueue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MessageQueue": {
+      "main": [
+        [
+          {
+            "node": "IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IA": {
+      "main": [
+        [
+          {
+            "node": "HiL1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HiL1": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "sLHg81zvRbzdgVNE"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Error Trigger": [
+      {
+        "json": {
+          "execution": {
+            "id": "260",
+            "url": "http://localhost:5678/workflow/sLHg81zvRbzdgVNE/executions/260",
+            "error": {
+              "level": "warning",
+              "tags": {},
+              "description": "'payload' expects a object but we got ''",
+              "timestamp": 1756081684031,
+              "context": {
+                "runIndex": 0,
+                "itemIndex": 0,
+                "nodeCause": "UserInfo"
+              },
+              "functionality": "regular",
+              "name": "ExpressionError",
+              "message": "Invalid input for 'payload' [item 0]",
+              "stack": "ExpressionError: Invalid input for 'payload' [item 0]\n    at validateValueAgainstSchema (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_5aee33ef851c7de341eb325c6a25e0ff/node_modules/n8n-core/src/execution-engine/node-execution-context/utils/validate-value-against-schema.ts:206:9)\n    at ExecuteContext._getNodeParameter (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_5aee33ef851c7de341eb325c6a25e0ff/node_modules/n8n-core/src/execution-engine/node-execution-context/node-execution-context.ts:469:42)\n    at ExecuteContext.getNodeParameter (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_5aee33ef851c7de341eb325c6a25e0ff/node_modules/n8n-core/src/execution-engine/node-execution-context/execute-context.ts:126:9)\n    at /usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-nodes-base@file+packages+nodes-base_@aws-sdk+credential-providers@3.808.0_asn1.js@5_1af219c3f47f2a1223ec4ccec249a974/node_modules/n8n-nodes-base/utils/workflowInputsResourceMapping/GenericFunctions.ts:127:32\n    at Array.map (<anonymous>)\n    at ExecuteContext.getWorkflowInputValues (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-nodes-base@file+packages+nodes-base_@aws-sdk+credential-providers@3.808.0_asn1.js@5_1af219c3f47f2a1223ec4ccec249a974/node_modules/n8n-nodes-base/utils/workflowInputsResourceMapping/GenericFunctions.ts:126:19)\n    at ExecuteContext.getCurrentWorkflowInputData (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-nodes-base@file+packages+nodes-base_@aws-sdk+credential-providers@3.808.0_asn1.js@5_1af219c3f47f2a1223ec4ccec249a974/node_modules/n8n-nodes-base/utils/workflowInputsResourceMapping/GenericFunctions.ts:148:65)\n    at ExecuteContext.execute (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-nodes-base@file+packages+nodes-base_@aws-sdk+credential-providers@3.808.0_asn1.js@5_1af219c3f47f2a1223ec4ccec249a974/node_modules/n8n-nodes-base/nodes/ExecuteWorkflow/ExecuteWorkflow/ExecuteWorkflow.node.ts:294:45)\n    at WorkflowExecute.runNode (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_5aee33ef851c7de341eb325c6a25e0ff/node_modules/n8n-core/src/execution-engine/workflow-execute.ts:1212:32)\n    at /usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_5aee33ef851c7de341eb325c6a25e0ff/node_modules/n8n-core/src/execution-engine/workflow-execute.ts:1582:38"
+            },
+            "lastNodeExecuted": "UserInfo",
+            "mode": "webhook"
+          },
+          "workflow": {
+            "id": "sLHg81zvRbzdgVNE",
+            "name": "SDR"
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "529d0816-cd83-4af8-af1a-3724107e0598",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-08-24T16:37:20.857Z",
+      "updatedAt": "2025-08-24T16:37:20.857Z",
+      "role": "workflow:owner",
+      "workflowId": "sLHg81zvRbzdgVNE",
+      "projectId": "zJ566HIhXw8t7HRd"
+    }
+  ],
+  "tags": []
+}

@@ -1,0 +1,271 @@
+{
+  "createdAt": "2025-08-24T23:59:11.911Z",
+  "updatedAt": "2025-08-25T00:21:35.698Z",
+  "id": "SPSwFqwFEWNuCS7S",
+  "name": "SDR - Response",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Resposta\n```\nResponde por partes\n```",
+        "height": 476,
+        "width": 1332,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        0
+      ],
+      "id": "f79f2d83-a582-4ef9-b02d-af568e56f791",
+      "name": "Sticky Note3",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "payload",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -112,
+        208
+      ],
+      "id": "5a83aa3d-9188-4ccf-b5e8-be2d4daa4d7b",
+      "name": "Payload"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "message",
+              "value": "={{ $json.payload.ia }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        112,
+        -112
+      ],
+      "id": "df66ed61-02b5-4ffb-830b-0776911dad74",
+      "name": "Execution Data"
+    },
+    {
+      "parameters": {
+        "jsCode": "const callback = $input.first().json.payload.ia\nfunction splitResponse(text) {\n   const delimiters = /(?<=\\.\\s)|(?<=!\\s)|(?<=\\?\\s)/;\n  return text.split(delimiters).map(item => item.trim()).filter(item => item.length > 0)\n}\n\nconst messages = splitResponse(callback)\n\nreturn {\n  json: {\n    messages\n  }\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        144,
+        208
+      ],
+      "id": "ce71e6b6-a1b7-4ab5-9326-c3d1773693c8",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "messages",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        352,
+        208
+      ],
+      "id": "8eba75de-eea0-43c6-a8c0-ad53ab0310db",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        560,
+        208
+      ],
+      "id": "5e607bbe-9c36-42c4-b2a0-5f4c1fbbf335",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$node['Payload'].json.payload.evolution.serverUrl}}/message/sendText/{{$node['Payload'].json.payload.evolution.instance}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{$node['Payload'].json.payload.evolution.apikey}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{$node['Payload'].json.payload.from}}\",\n  \"text\": {{ $('Loop Over Items').item.json.messages.toJsonString() }},\n  \"delay\": 2000\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        784,
+        224
+      ],
+      "id": "0f3e70fd-3b07-4869-8900-cb4ed2e70b54",
+      "name": "SentMessageEvo"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        224
+      ],
+      "id": "1cff466a-4010-409a-866e-f7d6674a016d",
+      "name": "Wait",
+      "webhookId": "3dd01868-1672-4724-b1b0-534845741bf8"
+    }
+  ],
+  "connections": {
+    "Payload": {
+      "main": [
+        [
+          {
+            "node": "Execution Data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "SentMessageEvo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SentMessageEvo": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Payload": [
+      {
+        "json": {
+          "payload": {
+            "fromMe": "false",
+            "from": "556781743964@s.whatsapp.net",
+            "msg": {
+              "id": "3A1B79F315EB27FA9068",
+              "date": "2025-08-24T20:55:46.000-03:00",
+              "content": "Pode ser o segundo horário"
+            },
+            "evolution": {
+              "apikey": "BC9627196560-496A-8A21-6E82B7F1C237",
+              "serverUrl": "https://evolution.rseat.store",
+              "instance": "maykbrito-wa"
+            },
+            "userInfo": {
+              "id": 2,
+              "whatsapp": "556781743964@s.whatsapp.net",
+              "name": "Mayk",
+              "email": "curioso@maykbrito.dev",
+              "notes": "Mayk demonstrou interesse na pós-graduação em IA e Automação da Rocketseat. Confirmou disponibilidade financeira para investir R$445,50 por mês. Conversamos sobre o agendamento de uma reunião com um especialista para esclarecer dúvidas e orientar sobre a matrícula.",
+              "qualify": true,
+              "created_at": "2025-08-24T16:56:46.897707+00:00"
+            },
+            "ia": "Mayk, sua reunião com o especialista sobre a pós-graduação em IA e Automação da Rocketseat foi agendada para o dia 25 de agosto de 2025, das 15:00 às 15:30. O convite foi enviado para seu email curioso@maykbrito.dev. Se precisar de mais alguma coisa, estou à disposição!"
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "930f8456-24db-487c-a085-90ecd6b99602",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-08-24T23:59:11.911Z",
+      "updatedAt": "2025-08-24T23:59:11.911Z",
+      "role": "workflow:owner",
+      "workflowId": "SPSwFqwFEWNuCS7S",
+      "projectId": "zJ566HIhXw8t7HRd"
+    }
+  ],
+  "tags": []
+}

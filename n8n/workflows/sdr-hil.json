@@ -1,0 +1,297 @@
+{
+  "createdAt": "2025-08-24T17:06:45.240Z",
+  "updatedAt": "2025-08-24T17:27:33.256Z",
+  "id": "kjjBZDpVuaTaAbjU",
+  "name": "SDR - HiL",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "payload",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -96,
+        -32
+      ],
+      "id": "8339a409-b43e-4bb5-bdf4-4630cd86cf02",
+      "name": "Payload"
+    },
+    {
+      "parameters": {
+        "content": "```\nHuman in Loop: Alguém está atendendo? Então, para o fluxo por X tempo, se não, continua o fluxo\n```",
+        "height": 528,
+        "width": 1168,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        -272
+      ],
+      "id": "2caab532-5ae8-4ba3-9271-6bf2ff87b081",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fe59ab07-ff86-40e5-b21d-a10d3fc58548",
+              "leftValue": "={{ $json.payload.fromMe }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        112,
+        -32
+      ],
+      "id": "c1e67252-9285-4977-a0e9-59a3c7f30edb",
+      "name": "SouEu?"
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "={{ $json.payload.whatsapp }}_block",
+        "value": "true",
+        "expire": true,
+        "ttl": 300
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        320,
+        -128
+      ],
+      "id": "3d0dd3e5-3901-4508-ade2-b50700c95571",
+      "name": "BloqueiaBot",
+      "credentials": {
+        "redis": {
+          "id": "Ci3KIWZeOARyfI6v",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "isBlocked",
+        "key": "={{ $json.payload.whatsapp }}_block",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        320,
+        48
+      ],
+      "id": "3aea1df6-7708-4d6f-aef4-a639bb356eb8",
+      "name": "IsBlocked?",
+      "credentials": {
+        "redis": {
+          "id": "Ci3KIWZeOARyfI6v",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "46cd8d16-f603-49c1-8f2f-9f4119bf9589",
+              "name": "isBlocked",
+              "value": "={{ \n!!$json.payload ? true : $json.isBlocked\n}}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        -32
+      ],
+      "id": "77bf777c-23bd-4ab2-b423-e7859e651397",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "556781743964@s.whatsapp.net_block"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        288
+      ],
+      "id": "99322b4f-7ef5-4683-aa0e-77b9b4d1574f",
+      "name": "Redis",
+      "credentials": {
+        "redis": {
+          "id": "Ci3KIWZeOARyfI6v",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "74080384-cc01-4f2a-a0b1-2f720d709362",
+              "leftValue": "={{ $json.isBlocked }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        848,
+        -32
+      ],
+      "id": "c8252d1e-fb23-4b04-91fc-cbc69c015608",
+      "name": "ShouldContinue?"
+    }
+  ],
+  "connections": {
+    "Payload": {
+      "main": [
+        [
+          {
+            "node": "SouEu?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SouEu?": {
+      "main": [
+        [
+          {
+            "node": "BloqueiaBot",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IsBlocked?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BloqueiaBot": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IsBlocked?": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "ShouldContinue?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Payload": [
+      {
+        "json": {
+          "payload": {
+            "whatsapp": "556781743964@s.whatsapp.net",
+            "fromMe": true
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "cf61eb1a-5d06-4dc0-817b-644c2318185d",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-08-24T17:06:45.240Z",
+      "updatedAt": "2025-08-24T17:06:45.240Z",
+      "role": "workflow:owner",
+      "workflowId": "kjjBZDpVuaTaAbjU",
+      "projectId": "zJ566HIhXw8t7HRd"
+    }
+  ],
+  "tags": []
+}

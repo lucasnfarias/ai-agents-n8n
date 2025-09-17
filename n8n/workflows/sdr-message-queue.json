@@ -1,0 +1,409 @@
+{
+  "createdAt": "2025-08-24T21:59:45.308Z",
+  "updatedAt": "2025-08-25T00:37:11.352Z",
+  "id": "1Wu7NPtuWIO13T7K",
+  "name": "SDR - MessageQueue",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Fila de mensagens\n```\nBuffer de mensagens, agrupando mensagens, aguardando X segundos, antes de seguir o fluxo\n```",
+        "height": 688,
+        "width": 1344,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        -96
+      ],
+      "id": "4619d7e7-078d-474e-910b-e2af9e26513d",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "payload",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -160,
+        224
+      ],
+      "id": "f8e48efb-2dbb-4b18-8c01-78fbaffc7292",
+      "name": "Payload"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ $json.payload.from }}_messages",
+        "messageData": "={{ JSON.stringify($json.payload.msg) }}",
+        "tail": true
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        48,
+        224
+      ],
+      "id": "f1d1043c-0f20-418c-abe1-ced1a0e77cd1",
+      "name": "AddToQueue",
+      "credentials": {
+        "redis": {
+          "id": "Ci3KIWZeOARyfI6v",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "messages",
+        "key": "={{ $node['Payload'].json.payload.from }}_messages",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        288,
+        224
+      ],
+      "id": "10e09ddf-69c4-4ec0-976b-27c0935b4893",
+      "name": "Redis",
+      "credentials": {
+        "redis": {
+          "id": "Ci3KIWZeOARyfI6v",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ JSON.parse($json.messages.first()).id }}",
+                    "rightValue": "={{ $node['Payload'].json.payload.msg.id }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEquals"
+                    },
+                    "id": "c846bd04-ebac-4396-b70c-a8cc8eaeec5b"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Do nothing"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "6d2ebbb4-9094-441c-87d7-29eb9a8f9820",
+                    "leftValue": "={{ JSON.parse($json.messages.last()).date }}",
+                    "rightValue": "={{ $now.minus(15, 'seconds') }}",
+                    "operator": {
+                      "type": "dateTime",
+                      "operation": "before"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Continue"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Wait"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        480,
+        208
+      ],
+      "id": "08b36579-85dc-4587-a047-530070db6be0",
+      "name": "Switch"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        736,
+        384
+      ],
+      "id": "ea3acfe7-30e0-446d-8b5c-773569c32db6",
+      "name": "Wait",
+      "webhookId": "178f8b38-5d24-48ff-a115-90de10a8cecd"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "88861e64-7bb3-4d92-9e9e-9f7ea39ae6b0",
+              "leftValue": "={{ $json.messages }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "b89c482a-222a-4f81-87ff-d3aa8ca7a9f7",
+              "leftValue": "={{ $json.messages }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "array",
+                "operation": "lengthLte",
+                "rightType": "number"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        736,
+        64
+      ],
+      "id": "4537acb0-53e5-4083-8088-a2f15ce5b50b",
+      "name": "KeepWaiting"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "={{ $node['Payload'].json.payload.from }}_messages"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        736,
+        224
+      ],
+      "id": "d0ba7703-4d5a-4d6e-a48b-0dce0ca83080",
+      "name": "Cleanup",
+      "credentials": {
+        "redis": {
+          "id": "Ci3KIWZeOARyfI6v",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "58f3d8c1-110c-4ce4-9d61-787207d31efb",
+              "name": "message",
+              "value": "={{ $json.messages.map(item => JSON.parse(item).content).join(\" \") }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        944,
+        224
+      ],
+      "id": "b33e1393-21b4-4cce-b3f9-62b4138e04e0",
+      "name": "Output"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "=556781743964@s.whatsapp.net_messages"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        432
+      ],
+      "id": "78da268c-7c55-4b73-b91c-159fcf380cbd",
+      "name": "Cleanup1",
+      "credentials": {
+        "redis": {
+          "id": "Ci3KIWZeOARyfI6v",
+          "name": "Redis account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Payload": {
+      "main": [
+        [
+          {
+            "node": "AddToQueue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AddToQueue": {
+      "main": [
+        [
+          {
+            "node": "Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "KeepWaiting",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Cleanup",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cleanup": {
+      "main": [
+        [
+          {
+            "node": "Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Payload": [
+      {
+        "json": {
+          "payload": {
+            "fromMe": "false",
+            "from": "556781743964@s.whatsapp.net",
+            "msg": {
+              "id": "3A0C0C67936F66E77E89",
+              "date": "2025-08-24T21:35:47.000-03:00",
+              "content": "Boa noite!"
+            },
+            "evolution": {
+              "apikey": "BC9627196560-496A-8A21-6E82B7F1C237",
+              "serverUrl": "https://evolution.rseat.store",
+              "instance": "maykbrito-wa"
+            },
+            "userInfo": {
+              "id": 2,
+              "whatsapp": "556781743964@s.whatsapp.net",
+              "name": "Mayk",
+              "email": "curioso@maykbrito.dev",
+              "notes": "Mayk demonstrou interesse na pós-graduação em IA e Automação da Rocketseat. Confirmou disponibilidade financeira para investir R$445,50 por mês. Conversamos sobre o agendamento de uma reunião com um especialista para esclarecer dúvidas e orientar sobre a matrícula.",
+              "qualify": true,
+              "created_at": "2025-08-24T16:56:46.897707+00:00"
+            }
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "86dd9692-cc34-4022-a498-5b7121960e88",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-08-24T21:59:45.308Z",
+      "updatedAt": "2025-08-24T21:59:45.308Z",
+      "role": "workflow:owner",
+      "workflowId": "1Wu7NPtuWIO13T7K",
+      "projectId": "zJ566HIhXw8t7HRd"
+    }
+  ],
+  "tags": []
+}

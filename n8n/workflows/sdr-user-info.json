@@ -1,0 +1,230 @@
+{
+  "createdAt": "2025-08-24T16:58:52.980Z",
+  "updatedAt": "2025-08-24T17:02:24.475Z",
+  "id": "iD1jyrdbwa2yekfj",
+  "name": "SDR - UserInfo",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "```\nUserInfo: Cadastra ou pega informações de usuário do Supabase\n```\n",
+        "height": 432,
+        "width": 880,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        -160
+      ],
+      "id": "92caefef-9abe-41b6-b9d6-45ad0dcb99d4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "clients",
+        "returnAll": true,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "whatsapp",
+              "condition": "eq",
+              "keyValue": "={{ $json.payload.whatsapp }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        32
+      ],
+      "id": "02df06e2-b91f-4a11-84c8-7c37893bfa73",
+      "name": "Get many rows",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "XXXXXXXXXXXXXX",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "clients",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "whatsapp",
+              "fieldValue": "={{ $('Webhook').item.json.body.data.key.remoteJid }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        304,
+        -48
+      ],
+      "id": "3b6c4535-b4e5-4a35-98a8-469c399fcde6",
+      "name": "Create a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "XXXXXXXXXXXXXX",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        512,
+        32
+      ],
+      "id": "31d847b9-ed0c-46e9-84e1-7f68ff0bd5fc",
+      "name": "UserInfo"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f95b44a3-5ddb-4ae4-b3f3-e8b5385a6448",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        64,
+        32
+      ],
+      "id": "380b7beb-d12b-4a54-a811-553fac5d5ea3",
+      "name": "UserNotFound?"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "payload",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -352,
+        32
+      ],
+      "id": "5c363b46-7190-44c0-b2ad-c9eab1ef58a7",
+      "name": "Payload"
+    }
+  ],
+  "connections": {
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "UserNotFound?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "UserInfo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UserNotFound?": {
+      "main": [
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "UserInfo",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Payload": {
+      "main": [
+        [
+          {
+            "node": "Get many rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Payload": [
+      {
+        "json": {
+          "payload": {
+            "whatsapp": "556781743964@s.whatsapp.net"
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "a9d5d23a-dfe3-4ce1-b501-4e5d2f2f4fee",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-08-24T16:58:52.980Z",
+      "updatedAt": "2025-08-24T16:58:52.980Z",
+      "role": "workflow:owner",
+      "workflowId": "iD1jyrdbwa2yekfj",
+      "projectId": "zJ566HIhXw8t7HRd"
+    }
+  ],
+  "tags": []
+}
