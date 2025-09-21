@@ -48,7 +48,9 @@ flowchart LR
   - [OpenAI](https://platform.openai.com/api-keys): set credits and get API Token
   - [GCP](https://console.cloud.google.com/auth/clients?project=n8n-ai-whatsapp): enabled Docs, Drive and Calendar APIs. Setup a OAuth Client ID.
   - Discord: webhook
-- Setup Hetzner Firewall to expose only ports 22 (ssh), 80 (http) and 443 (https) 
+- Setup Hetzner Firewall to expose only ports 22 (ssh), 80 (http) and 443 (https)
+- Implement n8n SDR workflows
+  - You can use the yaml files located on `n8n/workflows` folder 
 
 ## Containers
 
