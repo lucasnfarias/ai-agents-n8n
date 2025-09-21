@@ -67,7 +67,11 @@ flowchart LR
 - https://efficient-sloth-d85.notion.site/Desafio-Agentes-de-IA-com-n8n-na-pr-tica-25a395da57708012b45ce17b8f5c993f
 
 ## Troubleshooting
-## Supabase consuming too much CPU
+### Supabase consuming too much CPU
 - run `docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}"` on your server to check cpu and memory usage by containers
 - If you see some container from supabase consuming too much resource check if you can stop it
-  - e.g. supabase-vector container is related to logs and minor things and sometimes you don't use/need those  
+  - e.g. supabase-vector container is related to logs and minor things and sometimes you don't use/need those
+ 
+### EvolutionAPI not working
+- Whatsapp web app updates its version weekly and we set this value as `CONFIG_SESSION_PHONE_VERSION` for Evolution API
+- Sometimes you might need to re-check the whatsapp version and update it on `CONFIG_SESSION_PHONE_VERSION` env var on Coolify and restart the services
