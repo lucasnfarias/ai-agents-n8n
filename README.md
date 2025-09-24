@@ -63,6 +63,23 @@ flowchart LR
 - We use the [Queue Mode](https://docs.n8n.io/hosting/scaling/queue-mode/)
 <img width="752" height="261" alt="image" src="https://github.com/user-attachments/assets/c48397f7-0047-4ecc-ad8a-1f72033b1da1" />
 
+## Prompt Engineering
+### Techniques
+- [Zero-Shot Prompting](https://www.notion.so/Zero-Shot-Prompting-278cf3ea0623803e89b2cba2396d7092)
+- [Few-Shot Prompting](https://www.notion.so/Few-Shot-Prompting-278cf3ea062380ab9c1bd46c5b8d4ee9?pvs=21)
+- [Prompt de Follow-Up](https://www.notion.so/Prompt-de-Follow-Up-278cf3ea062380b18161ce2346345b65?pvs=21)
+- [Meta-Prompt](https://www.notion.so/Meta-Prompt-278cf3ea06238055824df816934e2fa1?pvs=21)
+- [Refinamento de Perguntas](https://www.notion.so/Refinamento-de-Perguntas-278cf3ea062380069d20fc8ed1d823e6?pvs=21)
+- [Persona do Usuário](https://www.notion.so/Persona-do-Usu-rio-278cf3ea062380d0a5eaeb3a37a05af3?pvs=21)
+- [Role Prompting](https://www.notion.so/Role-Prompting-278cf3ea06238097ba21e8d64b1f83df?pvs=21)
+- [Prompt de Dois Passos](https://www.notion.so/Prompt-de-Dois-Passos-278cf3ea06238006b76aeea4cbbfcb6b?pvs=21)
+- [Empilhamento de prompts (Prompt Layering)](https://www.notion.so/Empilhamento-de-prompts-Prompt-Layering-278cf3ea062380dda4e6e96f0c656404?pvs=21)
+- [Autoconsistência (Self-Consistency)](https://www.notion.so/Autoconsist-ncia-Self-Consistency-278cf3ea062380b7a464c9182c9d8108?pvs=21)
+- [Ancoragem de Memória](https://www.notion.so/Ancoragem-de-Mem-ria-278cf3ea062380098c84cc3679aebf20?pvs=21)
+- [Verificação Cognitiva](https://www.notion.so/Verifica-o-Cognitiva-278cf3ea062380009913dcd4ed1cf237?pvs=21)
+- [Cadeia de Pensamento (Chain of Thought)](https://www.notion.so/Cadeia-de-Pensamento-Chain-of-Thought-278cf3ea06238082b017ce4522d7f84a?pvs=21)
+- [Prompt iterativo (Iterative Prompting)](https://www.notion.so/Prompt-iterativo-Iterative-Prompting-278cf3ea062380188aaec1b0bc4ca2ab?pvs=21)
+
 ## Helpers
 - https://efficient-sloth-d85.notion.site/Desafio-Agentes-de-IA-com-n8n-na-pr-tica-25a395da57708012b45ce17b8f5c993f
 
